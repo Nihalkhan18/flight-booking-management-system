@@ -1,16 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import TextField from '@mui/material/TextField'
-import Button from '@mui/material/Button'
-import Stack from '@mui/material/Stack'
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Stack from '@mui/material/Stack';
 import { Box } from '@mui/material';
 import Paper from '@mui/material/Paper';
-
 
 function Form() {
     const navigate = useNavigate();
     const [inputs, setInputs] = useState({});
+    const [error, setError] = useState("");
 
     const handleChange = event => {
         const name = event.target.name;
@@ -19,15 +19,25 @@ function Form() {
     }
 
     const handleSubmit = event => {
-        console.log(inputs);
-        event.preventDefault()
-        navigate('/flights', { state: { origin: inputs.origin, destination: inputs.destination } })
+        event.preventDefault();
+        
+        // Basic validation for empty inputs
+        if (!inputs.origin || !inputs.destination || !inputs.travelDate) {
+            setError("All fields are required.");
+            return;
+        }
+
+        // Reset error message on successful validation
+        setError("");
+
+        // Navigate to flight results page with input data
+        navigate('/flights', { state: { origin: inputs.origin, destination: inputs.destination, travelDate: inputs.travelDate } });
     }
 
     return (
         <Box component={Paper} elevation={5} sx={{ backgroundColor: 'white', borderRadius: 2 }}>
             <form onSubmit={handleSubmit}>
-                <Stack sx={{ m: 2 }} direction='row' spacing={2}>
+                <Stack sx={{ m: 2 }} direction='column' spacing={2}>
                     <TextField
                         required
                         autoFocus
@@ -35,7 +45,7 @@ function Form() {
                         label="From"
                         name='origin'
                         value={inputs.origin || ""}
-                        inputProps={{ pattern: '[a-zA-Z]{3,15}$' }}
+                        inputProps={{ pattern: '[a-zA-Z\\s]{3,30}$' }}
                         onChange={handleChange}
                     />
                     <TextField
@@ -44,15 +54,25 @@ function Form() {
                         label="To"
                         name='destination'
                         value={inputs.destination || ""}
-                        inputProps={{ pattern: '[a-zA-Z]{3,15}$' }}
+                        inputProps={{ pattern: '[a-zA-Z\\s]{3,30}$' }}
                         onChange={handleChange}
                     />
+                    <TextField
+                        required
+                        type="date"
+                        id="outlined-required"
+                        label="Travel Date"
+                        name="travelDate"
+                        value={inputs.travelDate || ""}
+                        onChange={handleChange}
+                        InputLabelProps={{ shrink: true }}
+                    />
                     <Button variant='contained' type='submit'>Search Flight</Button>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                 </Stack>
             </form>
         </Box>
-    )
-
+    );
 }
 
 export default Form;

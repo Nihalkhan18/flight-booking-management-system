@@ -3,6 +3,8 @@ package com.capg.controller;
 import com.capg.dto.UserDataDTO;
 import com.capg.repository.UserRepository;
 import com.capg.service.UserDataService;
+
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +37,10 @@ public class UserController {
     public UserDataDTO userById(@PathVariable Integer id) {
         return userDataService.getUser(id);
     }
-
+    
+//     public User updateUser(@PathVariable Integer id, @RequestBody User u ) {
+//    	 return service.updateUser(id,u);
+//     }
     @PutMapping("/update/{id}")
     public ResponseEntity<UserDataDTO> updateUser(@PathVariable Integer id, @Valid @RequestBody UserDataDTO userDataDTO) {
         return new ResponseEntity<UserDataDTO>(userDataService.updateUser(id, userDataDTO), HttpStatus.ACCEPTED);

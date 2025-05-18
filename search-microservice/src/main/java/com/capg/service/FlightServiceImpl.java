@@ -7,25 +7,27 @@ import com.capg.repository.FlightRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class FlightServiceImpl implements FlightService{
+public class FlightServiceImpl implements FlightService {
 
     @Autowired
     private FlightRepository flightRepository;
 
     @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
-    //Get all flight details
+
+    // Get all flights
     @Override
     public List<FlightsDTO> getFlights() {
         List<Flights> flights = flightRepository.findAll();
         return flights.stream().map(FlightsDTO::new).collect(Collectors.toList());
     }
-    //Find flight by ID
+
+    // Get flight by ID
     @Override
     public FlightsDTO getFlight(Integer id) {
         Flights flights = flightRepository.findById(id)
@@ -33,53 +35,57 @@ public class FlightServiceImpl implements FlightService{
         return new FlightsDTO(flights);
     }
 
+    // Search by origin and destination only
     @Override
     public List<FlightsDTO> flightByOriginAndDestination(String origin, String destination) {
         List<Flights> flights = flightRepository.findByOriginAndDestination(origin, destination);
         return flights.stream().map(FlightsDTO::new).collect(Collectors.toList());
     }
 
-    //Create new flight
+    // Search by origin, destination and date
+    @Override
+    public List<FlightsDTO> flightByOriginDestinationAndDate(String origin, String destination, LocalDate travelDate) {
+        List<Flights> flights = flightRepository.findByOriginAndDestinationAndTravelDate(origin, destination, travelDate);
+        return flights.stream().map(FlightsDTO::new).collect(Collectors.toList());
+    }
+
+    // Create new flight
     @Override
     public FlightsDTO newFlight(FlightsDTO flightsDTO) {
         Flights flights = new Flights(flightsDTO);
-        flights.setFlightId(sequenceGeneratorService.getSequenceNumber(Flights.SEQUENCE_NAME));
+      
         return new FlightsDTO(flightRepository.save(flights));
     }
-    //Update flight
+
+    // Update flight
     @Override
     public FlightsDTO updateFlight(Integer id, FlightsDTO flightsDTO) {
         Flights flights = flightRepository.findById(id)
                 .orElseThrow(() -> new FlightNotFoundException("Flight does not exist with id: " + id));
 
-        Optional<Flights> optionalFlights = flightRepository.findById(id);
-        flightRepository.delete(flights);
+        flights.setFlightName(flightsDTO.getFlightName() != null ? flightsDTO.getFlightName() : flights.getFlightName());
+        flights.setOrigin(flightsDTO.getOrigin() != null ? flightsDTO.getOrigin() : flights.getOrigin());
+        flights.setDestination(flightsDTO.getDestination() != null ? flightsDTO.getDestination() : flights.getDestination());
+        flights.setDepartureTime(flightsDTO.getDepartureTime() != null ? flightsDTO.getDepartureTime() : flights.getDepartureTime());
+        flights.setArrivalTime(flightsDTO.getArrivalTime() != null ? flightsDTO.getArrivalTime() : flights.getArrivalTime());
+        flights.setSeats(flightsDTO.getSeats() != null ? flightsDTO.getSeats() : flights.getSeats());
+        flights.setFare(flightsDTO.getFare() != null ? flightsDTO.getFare() : flights.getFare());
+        flights.setTravelDate(flightsDTO.getTravelDate() != null ? flightsDTO.getTravelDate() : flights.getTravelDate());
+        flights.setAvailableMaleSeats(flightsDTO.getAvailableMaleSeats() != null ? flightsDTO.getAvailableMaleSeats() : flights.getAvailableMaleSeats());
+        flights.setAvailableFemaleSeats(flightsDTO.getAvailableFemaleSeats() != null ? flightsDTO.getAvailableFemaleSeats() : flights.getAvailableFemaleSeats());
 
-        if (optionalFlights.isPresent()) {
-            Flights flightsSave = optionalFlights.get();
-
-            flightsSave.setFlightId(flights.getFlightId());
-            flightsSave.setFlightName(flightsDTO.getFlightName() != null ? flightsDTO.getFlightName() : flightsSave.getFlightName());
-            flightsSave.setOrigin(flightsDTO.getOrigin() != null ? flightsDTO.getOrigin() : flightsSave.getOrigin());
-            flightsSave.setDestination(flightsDTO.getDestination() != null ? flightsDTO.getDestination() : flightsSave.getDestination());
-            flightsSave.setDepartureTime(flightsDTO.getDepartureTime() != null ? flightsDTO.getDepartureTime() : flightsSave.getDepartureTime());
-            flightsSave.setArrivalTime(flightsDTO.getArrivalTime() != null ? flightsDTO.getArrivalTime() : flightsSave.getArrivalTime());
-            flightsSave.setSeats(flightsDTO.getSeats() != null ? flightsDTO.getSeats() : flightsSave.getSeats());
-            flightsSave.setFare(flightsDTO.getFare() != null ? flightsDTO.getFare() : flightsSave.getFare());
-
-            flightRepository.save(flightsSave);
-            return new FlightsDTO(flightsSave);
-        }
-        return new FlightsDTO(flights);
+        return new FlightsDTO(flightRepository.save(flights));
     }
-    //Delete flight with given ID
+
+    // Delete flight by ID
     @Override
     public void deleteFlight(Integer id) {
         Flights flights = flightRepository.findById(id)
                 .orElseThrow(() -> new FlightNotFoundException("Flight does not exist with id: " + id));
         flightRepository.delete(flights);
     }
-    //Delete all flights
+
+    // Delete all flights
     @Override
     public void deleteAll() {
         flightRepository.deleteAll();

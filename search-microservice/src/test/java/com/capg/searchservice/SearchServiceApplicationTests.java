@@ -9,117 +9,100 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class SearchServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+    @Mock
+    private FlightRepository flightRepository;
 
-	@Mock
-	private FlightRepository flightRepository;
-	@InjectMocks
-	FlightServiceImpl flightService;
+    @InjectMocks
+    private FlightServiceImpl flightService;
 
-	@Test
-	public void doesFlightExistById() {
-		Flights flights = new Flights(
-				20,
-				"Akasa",
-				"Chennai",
-				"Calicut",
-				"12.30",
-				"2.45",
-				58,
-				3600);
-		flightRepository.save(flights);
-		Optional<Flights> foundFlight = flightRepository.findById(20);
+    @Test
+    void contextLoads() {
+    }
 
-		if (!foundFlight.isEmpty()) {
-			Boolean actualResult = true;
-			assertThat(actualResult).isTrue();
-		}
-	}
+    @Test
+    void testDoesFlightExistById() {
+        Flights flights = new Flights(
+                20,
+                "Akasa",
+                "Chennai",
+                "Calicut",
+                "12.30",
+                "2.45",
+                58,
+                3600,
+                LocalDate.of(2025, 5, 20),
+                29,
+                29
+        );
 
-	@Test
-	public void  saveFlightTest() {
-		Flights flights = new Flights(
-				21,
-				"Indigo",
-				"Chennai",
-				"Cochin",
-				"12.30",
-				"2.45",
-				62,
-				3500);
-		flightRepository.save(flights);
-		verify(flightRepository, times(1)).save(flights);
-	}
+        when(flightRepository.findById(20)).thenReturn(Optional.of(flights));
 
-	@Test
-	public void getAllFlights() {
-		List<Flights> flightsList = new ArrayList<Flights>();
-		Flights flights1 = new Flights(
-				20,
-				"Akasa",
-				"Chennai",
-				"Calicut",
-				"12.30",
-				"2.45",
-				58,
-				3600);
-		Flights flights2 = new Flights(
-				21,
-				"Indigo",
-				"Calicut",
-				"Banglore",
-				"6.30",
-				"8.45",
-				26,
-				3200);
-		Flights flights3 = new Flights(
-				22,
-				"Indigo",
-				"Calicut",
-				"Banglore",
-				"8.35",
-				"10.45",
-				43,
-				3250);
+        FlightsDTO found = flightService.getFlight(20);
 
-		flightsList.add(flights1);
-		flightsList.add(flights2);
-		flightsList.add(flights3);
+        assertThat(found).isNotNull();
+        assertEquals("Akasa", found.getFlightName());
+        verify(flightRepository, times(1)).findById(20);
+    }
 
-		when(flightRepository.findAll()).thenReturn(flightsList);
+    @Test
+    void testSaveFlight() {
+        Flights flights = new Flights(
+                21,
+                "Indigo",
+                "Chennai",
+                "Cochin",
+                "12.30",
+                "2.45",
+                62,
+                3500,
+                LocalDate.of(2025, 5, 21),
+                31,
+                31
+        );
 
-		List<FlightsDTO> flightsDTOList = flightService.getFlights();
+        when(flightRepository.save(any(Flights.class))).thenReturn(flights);
 
-		assertEquals(3, flightsDTOList.size());
-		verify(flightRepository, times(1)).findAll();
-	}
+        FlightsDTO dto = new FlightsDTO(flights);
+        FlightsDTO saved = flightService.newFlight(dto);
 
-	@Test
-	public void deleteFlightTest() {
-		Flights flights = new Flights(
-				30,
-				"Akasa",
-				"Chennai",
-				"Calicut",
-				"12.30",
-				"2.45",
-				58,
-				3600);
-		flightRepository.deleteById(30);
-		verify(flightRepository, times(1)).deleteById(30);
-	}
+        assertEquals("Indigo", saved.getFlightName());
+        verify(flightRepository, times(1)).save(any(Flights.class));
+    }
+
+    @Test
+    void testGetAllFlights() {
+        List<Flights> flightsList = Arrays.asList(
+                new Flights(20, "Akasa", "Chennai", "Calicut", "12.30", "2.45", 58, 3600, LocalDate.of(2025,5,20), 29, 29),
+                new Flights(21, "Indigo", "Calicut", "Bangalore", "6.30", "8.45", 26, 3200, LocalDate.of(2025,5,20), 13, 13),
+                new Flights(22, "Indigo", "Calicut", "Bangalore", "8.35", "10.45", 43, 3250, LocalDate.of(2025,5,20), 22, 21)
+        );
+
+        when(flightRepository.findAll()).thenReturn(flightsList);
+
+        List<FlightsDTO> flightsDTOList = flightService.getFlights();
+
+        assertEquals(3, flightsDTOList.size());
+        verify(flightRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testDeleteFlight() {
+        Flights flight = new Flights(30, "Akasa", "Chennai", "Calicut", "12.30", "2.45", 58, 3600, LocalDate.of(2025,5,20), 29, 29);
+
+        when(flightRepository.findById(30)).thenReturn(Optional.of(flight));
+
+        flightService.deleteFlight(30);
+
+        verify(flightRepository, times(1)).delete(flight);
+    }
 }

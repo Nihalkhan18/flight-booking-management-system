@@ -1,10 +1,16 @@
 package com.capg.entity;
 
-import javax.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "flights")
 public class Flights {
@@ -17,21 +23,34 @@ public class Flights {
     @Column(name = "flight_name")
     private String flightName;
 
-    @Column(name = "airline")
-    private String airline;
-
-    @Column(name = "source")
-    private String source;
+    @Column(name = "origin")
+    private String origin;
 
     @Column(name = "destination")
     private String destination;
 
-    // One flight can have many bookings (One-to-Many relationship)
-    @OneToMany(mappedBy = "flights", fetch = FetchType.LAZY)
-    private List<BookingDetails> bookingDetails;
+    @Column(name = "departure_time")
+    private String departureTime;
 
-	public void setAvailableSeats(int i) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Column(name = "arrival_time")
+    private String arrivalTime;
+
+    @Column(name = "seats")
+    private Integer seats;
+
+    @Column(name = "fare")
+    private Integer fare;
+
+    @Column(name = "travel_date")
+    private LocalDate travelDate;
+
+    @Column(name = "available_male_seats")
+    private Integer availableMaleSeats;
+
+    @Column(name = "available_female_seats")
+    private Integer availableFemaleSeats;
+
+    // One flight can have many bookings (One-to-Many relationship)
+    @OneToMany(mappedBy = "flights", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<BookingDetails> bookingDetails;
 }

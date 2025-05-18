@@ -2,6 +2,7 @@ package com.capg.service;
 
 import com.capg.dto.FlightsDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,10 +14,13 @@ public interface FlightService {
     FlightsDTO getFlight(Integer id);
 
     List<FlightsDTO> flightByOriginAndDestination(String origin, String destination);
+    List<FlightsDTO> flightByOriginDestinationAndDate(String origin, String destination, LocalDate travelDate);
+
 
     FlightsDTO newFlight(FlightsDTO flightsDTO);
     FlightsDTO updateFlight(Integer id, FlightsDTO flightsDTO);
     void deleteFlight(Integer id);
     void deleteAll();
+    
 
 }

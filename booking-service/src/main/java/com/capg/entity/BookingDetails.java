@@ -62,7 +62,6 @@ public class BookingDetails {
         this.phoneNo = bookingDetailsDTO.getPhoneNo();
         this.requiredSeats = bookingDetailsDTO.getRequiredSeats();
         this.flightId = bookingDetailsDTO.getFlightId();
-        this.flights = bookingDetailsDTO.getFlights();
         this.bookedOn = bookingDetailsDTO.getBookedOn();
         this.updatedOn = bookingDetailsDTO.getUpdatedOn();
     }

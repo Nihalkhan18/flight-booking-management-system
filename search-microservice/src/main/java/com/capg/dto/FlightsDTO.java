@@ -1,13 +1,16 @@
 package com.capg.dto;
 
-import com.capg.entity.Flights;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.capg.entity.Flights;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -40,6 +43,16 @@ public class FlightsDTO {
     @NotNull
     private Integer fare;
 
+    @NotNull(message = "Travel date is required")
+    private LocalDate travelDate;
+
+    @NotNull(message = "Available male seats is required")
+    private Integer availableMaleSeats;
+
+    @NotNull(message = "Available female seats is required")
+    private Integer availableFemaleSeats;
+
+    // Constructor from Entity
     public FlightsDTO(Flights flights){
         this.flightId = flights.getFlightId();
         this.flightName = flights.getFlightName();
@@ -49,5 +62,8 @@ public class FlightsDTO {
         this.arrivalTime = flights.getArrivalTime();
         this.seats = flights.getSeats();
         this.fare = flights.getFare();
+        this.travelDate = flights.getTravelDate();
+        this.availableMaleSeats = flights.getAvailableMaleSeats();
+        this.availableFemaleSeats = flights.getAvailableFemaleSeats();
     }
 }

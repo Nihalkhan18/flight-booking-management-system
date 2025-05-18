@@ -2,12 +2,20 @@ package com.capg.repository;
 
 import com.capg.dto.BookingDetailsDTO;
 import com.capg.entity.BookingDetails;
+import com.capg.entity.Flights;
+
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("bookingFlightRepository")
 public interface BookingRepository extends JpaRepository<BookingDetails, Integer>{
+    
+	BookingDetails save(BookingDetails bookingDetails); // ✅ Already inherited from JpaRepository
 
-	BookingDetailsDTO save(BookingDetailsDTO bookingDetailsDTO);
+
+	void save(List<Flights> asList);
+
+	
 }

@@ -1,7 +1,6 @@
 package com.capg.dto;
 
 import com.capg.entity.BookingDetails;
-import com.capg.entity.Flights;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,29 +17,36 @@ import java.time.LocalDateTime;
 public class BookingDetailsDTO {
 
     private int bookingId;
+
     @NotBlank(message = "First name cannot be blank or null")
     @Size(min = 3, max = 30)
     private String firstName;
+
     @NotBlank(message = "Last name cannot be blank or null")
     @Size(min = 3, max = 30)
     private String lastName;
+
     @NotBlank(message = "Gender cannot be blank or null")
     @Size(min = 3, max = 30)
     private String gender;
+
     @Email(message = "Invalid email", regexp = "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$")
     @NotBlank(message = "Email cannot be blank or null")
     private String email;
+
     @NotBlank(message = "Phone number cannot be blank or null")
     @Size(min = 10, max = 10)
     private String phoneNo;
+
     @NotNull
     private Integer requiredSeats;
-    private int flightId;
-    private Flights flights;
+
+    private int flightId;  // Only keep flightId reference here
 
     private LocalDateTime bookedOn;
     private LocalDateTime updatedOn;
 
+    // Constructor converting entity to DTO
     public BookingDetailsDTO(BookingDetails bookingDetails) {
         this.bookingId = bookingDetails.getBookingId();
         this.firstName = bookingDetails.getFirstName();
@@ -50,8 +56,6 @@ public class BookingDetailsDTO {
         this.phoneNo = bookingDetails.getPhoneNo();
         this.requiredSeats = bookingDetails.getRequiredSeats();
         this.flightId = bookingDetails.getFlightId();
-        this.flights = bookingDetails.getFlights();
-
         this.bookedOn = bookingDetails.getBookedOn();
         this.updatedOn = bookingDetails.getUpdatedOn();
     }

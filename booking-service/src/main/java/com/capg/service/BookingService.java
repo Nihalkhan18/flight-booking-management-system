@@ -1,7 +1,9 @@
 package com.capg.service;
 
 import com.capg.dto.BookingDetailsDTO;
+import com.capg.dto.FlightsDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,6 +12,8 @@ public interface BookingService {
 
     List<BookingDetailsDTO> getBookingDetails();
     BookingDetailsDTO getBookingDetailsById(Integer id);
+    List<FlightsDTO> flightByOriginDestinationAndDate(String origin, String destination, LocalDate travelDate);
+
     BookingDetailsDTO newBooking(BookingDetailsDTO bookingDetailsDTO);
     BookingDetailsDTO updateBookingDetails(Integer id, BookingDetailsDTO bookingDetailsDTO);
     void deleteBookingDetailsById(Integer id);

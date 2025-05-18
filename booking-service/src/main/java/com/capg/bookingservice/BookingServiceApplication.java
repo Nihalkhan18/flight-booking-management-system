@@ -1,5 +1,8 @@
 package com.capg.bookingservice;
 
+import java.util.Arrays;
+
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -9,6 +12,9 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
+
+import com.capg.entity.Flights;
+import com.capg.repository.BookingRepository;
 
 
 @SpringBootApplication
@@ -30,5 +36,6 @@ public class BookingServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(BookingServiceApplication.class, args);
 	}
+
 
 }
